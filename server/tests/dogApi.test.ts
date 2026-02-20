@@ -17,23 +17,23 @@ describe('Dog API tests', () => {
 
     test('GET /api/dogs/random returns 500 and error JSON when controller fails', async () => {
 
-    const mockedErrorJson = {
-        success: false,
-        error: 'Failed to fetch dog image: Network error',
-    }
-
-    vi.mocked(dogController.getDogImage).mockImplementation(
-        async (_req: Request, res: Response) => {
-            res.status(500).json(mockedErrorJson)
+        const mockedErrorJson = {
+            success: false,
+            error: 'Failed to fetch dog image: Network error',
         }
-    )
 
-    const response = await request(app).get('/api/dogs/random')
+        vi.mocked(dogController.getDogImage).mockImplementation(
+            async (_req: Request, res: Response) => {
+                res.status(500).json(mockedErrorJson)
+            }
+        )
 
-    expect(response.status).toBe(500)
-    expect(response.body.success).toBe(false)
-    expect(response.body.error).toBeDefined()
-    expect(response.body.error).toBe('Failed to fetch dog image: Network error')
-    
+        const response = await request(app).get('/api/dogs/random')
+
+        expect(response.status).toBe(500)
+        expect(response.body.success).toBe(false)
+        expect(response.body.error).toBeDefined()
+        expect(response.body.error).toBe('Failed to fetch dog image: Network error')
+
     })
 })
