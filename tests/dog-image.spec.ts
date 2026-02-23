@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
 
 test.describe('Dog image loads', () => {
 
@@ -35,5 +35,20 @@ test.describe('Dog image loads', () => {
 
     })
 
+})
+
+test.describe('Dog image error handling', () => {
+
+    test('should show error message when API call fails', async ({ page }) => {
+
+        await page.route('**/api/dogs/random', async (route) => {
+            await route.abort()
+        })
+
+        await page.goto('/')
+
+        const errorElement = page.getByText(/error/i)
+        await expect(errorElement).toBeVisible()
+    })
 
 })
