@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Dog image loads on page load', () => {
+test.describe('Dog image loads', () => {
 
     test('should retrieve dog image successfully when page is loaded', async ({ page }) => {
 
@@ -18,5 +18,22 @@ test.describe('Dog image loads on page load', () => {
         expect(responseData.data).toHaveProperty('status', 'success')
         expect(responseData.data.imageUrl).toContain('https://')
     })
+
+    test('should retrieve image when "Get New Dog Image" button is clicked', async ({ page }) => {
+
+        await page.goto('/')
+
+        const img = page.locator('img.dog-image')
+        await expect(img).toHaveAttribute('src', /^https:\/\//)
+
+        const responsePromise = page.waitForResponse('**/api/dogs/random')
+
+        await page.getByRole('button', { name: 'Get Another Dog' }).click()
+        await responsePromise
+
+        await expect(img).toHaveAttribute('src', /^https:\/\//)
+
+    })
+
 
 })
