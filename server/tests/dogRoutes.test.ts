@@ -15,7 +15,7 @@ describe('dogRoutes /api/dogs/random', () => {
         vi.resetAllMocks()
     })
 
-    test('GET /api/dogs/random returns mocked dog image', async () => {
+    test('Assignment 4 GET /api/dogs/random returns mocked dog image', async () => {
 
         vi.mocked(dogController.getDogImage).mockImplementation(
             async (_req: Request, res: Response) => {
@@ -36,5 +36,37 @@ describe('dogRoutes /api/dogs/random', () => {
         expect(response.body.success).toBe(true)
         expect(response.body.data.imageUrl)
             .toContain("https://images.dog.ceo/breeds/stbernard/n02109525_15579.jpg")
+    })
+})
+
+describe('Assignment 4 negative route test', () => {
+
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
+    afterEach(() => {
+        vi.resetAllMocks()
+    })
+
+    test('GET /api/dogs/random returns 500 and error JSON when controller fails', async () => {
+
+        const mockedErrorJson = {
+            success: false,
+            error: 'Failed to fetch dog image: Network error',
+        }
+
+        vi.mocked(dogController.getDogImage).mockImplementation(
+            async (_req: Request, res: Response) => {
+                res.status(500).json(mockedErrorJson)
+            }
+        )
+
+        const response = await request(app).get('/api/dogs/random')
+
+        expect(response.status).toBe(500)
+        expect(response.body.success).toBe(false)
+        expect(response.body.error).toBeDefined()
+        expect(response.body.error).toBe('Failed to fetch dog image: Network error')
+
     })
 })
